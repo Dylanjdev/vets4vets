@@ -406,10 +406,10 @@ function HomePage({ navigate }) {
                 <h3>{service.title}</h3>
                 <p>{service.short}</p>
                 <Link
-                  to="/services"
+                  to="/contact"
                   navigate={navigate}
                   className="service-preview__link"
-                  aria-label={`Learn more about ${service.title}`}
+                  aria-label={`Ask for help with ${service.title}`}
                 >
                   <Icon name="arrow" size={20} />
                 </Link>
