@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Libre+Franklin:wght@400;500;600&display=swap');
+
+:root {
+  --ink: #080c11;
+  --black: #05070a;
+  --navy: #0d1c2c;
+  --navy-light: #173049;
+  --red: #b32626;
+  --red-bright: #d13b32;
+  --silver: #d9d8d1;
+  --silver-dark: #a9aaa6;
+  --paper: #f3f0e9;
+  --white: #fff;
+  --muted: #686b70;
+  --line: rgba(11, 19, 28, 0.14);
+  --heading: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --body: 'Libre Franklin', 'Helvetica Neue', Arial, sans-serif;
+  --ui: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--body);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--ink);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--body);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  color: var(--white);
+  background: var(--red);
+}
+
+:focus-visible {
+  outline: 3px solid rgba(209, 59, 50, 0.75);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

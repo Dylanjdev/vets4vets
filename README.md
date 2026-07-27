@@ -1,17 +1,34 @@
-# React + Vite
+# VETS4VETS26
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Official VETS4VETS26 website, built with React and Vite.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+## Deploy to GitHub Pages
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The production build is configured for:
 
-## Expanding the ESLint configuration
+```text
+https://dylanjdev.github.io/vets4vets/
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# vets4vets
+Deploy the current project to the `gh-pages` branch:
+
+```bash
+npm run deploy
+```
+
+The command builds the site, adds `.nojekyll`, and pushes `dist` to the
+`gh-pages` branch. In the GitHub repository, set **Settings → Pages → Build and
+deployment → Source** to **Deploy from a branch**, then select:
+
+- Branch: `gh-pages`
+- Folder: `/ (root)`
+
+The included `404.html` redirect restores client-side routes, so direct visits
+and browser refreshes work on `/mission`, `/services`, and `/contact`.
