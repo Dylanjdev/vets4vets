@@ -1,6 +1,8 @@
 {
   "name": "VETS4VETS26",
   "short_name": "VETS4VETS26",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "android-chrome-192x192.png",

@@ -1,17 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=Libre+Franklin:wght@400;500;600&display=swap');
-
 :root {
   --ink: #080c11;
   --black: #05070a;
   --navy: #0d1c2c;
   --navy-light: #173049;
   --red: #b32626;
-  --red-bright: #d13b32;
+  --red-bright: #e5554b;
   --silver: #d9d8d1;
   --silver-dark: #a9aaa6;
   --paper: #f3f0e9;
   --white: #fff;
-  --muted: #686b70;
+  --muted: #5f6266;
   --line: rgba(11, 19, 28, 0.14);
   --heading: 'Barlow Condensed', 'Arial Narrow', sans-serif;
   --body: 'Libre Franklin', 'Helvetica Neue', Arial, sans-serif;
@@ -71,6 +69,7 @@ textarea {
 img {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 
 ::selection {
@@ -79,8 +78,9 @@ img {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(209, 59, 50, 0.75);
+  outline: 3px solid var(--white);
   outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--ink);
 }
 
 @media (prefers-reduced-motion: reduce) {

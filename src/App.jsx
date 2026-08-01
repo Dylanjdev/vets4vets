@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import logo from './assets/vetlogo.webp'
 import './App.css'
 
@@ -12,7 +12,19 @@ const pages = {
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, '')
 
 function browserPath(to) {
-  return `${basePath}${to}`
+  const routePath = to === '/' ? '/' : `${to}/`
+  return `${basePath}${routePath}`
+}
+
+function normalizePath(initialPath = '/') {
+  let current = typeof window === 'undefined' ? initialPath : window.location.pathname
+
+  if (basePath && current.startsWith(`${basePath}/`)) {
+    current = current.slice(basePath.length)
+  }
+
+  current = current.replace(/\/+$/, '') || '/'
+  return pages[current] ? current : '/'
 }
 
 const services = [
@@ -194,10 +206,18 @@ function Icon({ name, size = 24 }) {
   return <svg {...common}>{paths[name]}</svg>
 }
 
-function BrandMark({ compact = false }) {
+function BrandMark({ compact = false, priority = false }) {
   return (
     <div className={`brand-mark ${compact ? 'brand-mark--compact' : ''}`}>
-      <img src={logo} alt="" />
+      <img
+        src={logo}
+        alt=""
+        width="788"
+        height="788"
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchPriority={priority ? 'high' : 'auto'}
+      />
       <div>
         <span className="brand-name">VETS<span>4</span>VETS<b>26</b></span>
         {!compact && <small>By veterans, for veterans</small>}
@@ -232,6 +252,21 @@ function Link({ to, className = '', children, navigate, onClick, ...props }) {
 
 function Header({ path, navigate }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const menuButtonRef = useRef(null)
+
+  useEffect(() => {
+    if (!menuOpen) return undefined
+
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') {
+        setMenuOpen(false)
+        menuButtonRef.current?.focus()
+      }
+    }
+
+    document.addEventListener('keydown', closeOnEscape)
+    return () => document.removeEventListener('keydown', closeOnEscape)
+  }, [menuOpen])
 
   return (
     <>
@@ -253,9 +288,13 @@ function Header({ path, navigate }) {
             className="brand-link"
             aria-label="VETS4VETS26 home"
           >
-            <BrandMark />
+            <BrandMark priority />
           </Link>
-          <nav className={`main-nav ${menuOpen ? 'main-nav--open' : ''}`} aria-label="Main navigation">
+          <nav
+            id="main-navigation"
+            className={`main-nav ${menuOpen ? 'main-nav--open' : ''}`}
+            aria-label="Main navigation"
+          >
             {Object.entries(pages).map(([href, page]) => (
               <Link
                 key={href}
@@ -279,10 +318,12 @@ function Header({ path, navigate }) {
             </Link>
           </nav>
           <button
+            ref={menuButtonRef}
             className="menu-button"
             type="button"
             aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
             aria-expanded={menuOpen}
+            aria-controls="main-navigation"
             onClick={() => setMenuOpen((open) => !open)}
           >
             <Icon name={menuOpen ? 'close' : 'menu'} />
@@ -305,7 +346,7 @@ function SectionHeading({ eyebrow, title, text, light = false }) {
 
 function HomePage({ navigate }) {
   return (
-    <main>
+    <main id="main-content" tabIndex="-1">
       <section className="home-hero">
         <div className="hero-grid-lines" aria-hidden="true" />
         <div className="site-container home-hero__grid">
@@ -340,14 +381,19 @@ function HomePage({ navigate }) {
             <img
               src={logo}
               alt="VETS4VETS26 — because no veteran fights alone"
+              width="788"
+              height="788"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
             />
             <div className="emblem-caption">
               <span>Support</span>
-              <i>★</i>
+              <i aria-hidden="true">★</i>
               <span>Respect</span>
-              <i>★</i>
+              <i aria-hidden="true">★</i>
               <span>Honor</span>
-              <i>★</i>
+              <i aria-hidden="true">★</i>
               <span>Hope</span>
             </div>
           </div>
@@ -422,7 +468,14 @@ function HomePage({ navigate }) {
       <section className="pledge-section">
         <div className="site-container pledge-grid">
           <div className="pledge-image-wrap">
-            <img src={logo} alt="" />
+            <img
+              src={logo}
+              alt=""
+              width="788"
+              height="788"
+              loading="lazy"
+              decoding="async"
+            />
             <span className="pledge-stamp">
               <b>V4V</b>
               <small>We&apos;ve got your six</small>
@@ -452,7 +505,7 @@ function HomePage({ navigate }) {
 
 function MissionPage({ navigate }) {
   return (
-    <main>
+    <main id="main-content" tabIndex="-1">
       <PageHero
         index="01"
         eyebrow="Our Mission"
@@ -514,7 +567,7 @@ function MissionPage({ navigate }) {
       <section className="served-section section-pad">
         <div className="site-container served-grid">
           <div className="served-quote">
-            <span className="quote-mark">“</span>
+            <span className="quote-mark" aria-hidden="true">“</span>
             <h2>You served us.<br />Let us serve you.</h2>
           </div>
           <div className="served-copy">
@@ -537,7 +590,7 @@ function MissionPage({ navigate }) {
 
 function ServicesPage({ navigate }) {
   return (
-    <main>
+    <main id="main-content" tabIndex="-1">
       <PageHero
         index="02"
         eyebrow="How We Help"
@@ -611,7 +664,7 @@ function ServicesPage({ navigate }) {
             ].map((item) => (
               <article className="process-step" key={item.step}>
                 <span>{item.step}</span>
-                <div className="process-step__line" />
+                <div className="process-step__line" aria-hidden="true" />
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
               </article>
@@ -657,7 +710,7 @@ function ContactPage() {
   }
 
   return (
-    <main>
+    <main id="main-content" tabIndex="-1">
       <PageHero
         index="03"
         eyebrow="Contact Us"
@@ -703,6 +756,7 @@ function ContactPage() {
                   <small>Office</small>
                   <strong>620 State Street, STE 3008</strong>
                   <em>Bristol, TN 37630</em>
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </div>
               </a>
               <a
@@ -716,6 +770,7 @@ function ContactPage() {
                   <small>Facebook</small>
                   <strong>VETS4VETS26</strong>
                   <em>Visit our Facebook page</em>
+                  <span className="sr-only"> (opens in a new tab)</span>
                 </div>
               </a>
             </div>
@@ -723,31 +778,37 @@ function ContactPage() {
 
           <div className="form-panel">
             <div className="form-panel__head">
-              <span>Request Assistance</span>
+              <h2 id="assistance-form-title">Request Assistance</h2>
               <b>A simple first step</b>
             </div>
             <form
               action="https://formspree.io/f/mgogjpbe"
               method="POST"
               onSubmit={handleSubmit}
+              aria-labelledby="assistance-form-title"
+              aria-describedby="form-privacy-note"
+              aria-busy={formStatus === 'submitting'}
             >
               <input type="hidden" name="_subject" value="Veteran assistance request" />
+              <p className="form-required-note">
+                <span aria-hidden="true">*</span> Required fields
+              </p>
               <div className="field-row">
                 <label>
-                  Your Name <span>*</span>
+                  Your Name <span aria-hidden="true">*</span>
                   <input name="name" type="text" autoComplete="name" required placeholder="Full name" />
                 </label>
                 <label>
-                  Phone Number
+                  Phone Number (optional)
                   <input name="phone" type="tel" autoComplete="tel" placeholder="(000) 000-0000" />
                 </label>
               </div>
               <label>
-                Email Address <span>*</span>
+                Email Address <span aria-hidden="true">*</span>
                 <input name="email" type="email" autoComplete="email" required placeholder="you@email.com" />
               </label>
               <label>
-                How Can We Help? <span>*</span>
+                How Can We Help? <span aria-hidden="true">*</span>
                 <select name="need" defaultValue="" required>
                   <option value="" disabled>Select an area of need</option>
                   <option>Bill Pay Assistance</option>
@@ -758,7 +819,7 @@ function ContactPage() {
                 </select>
               </label>
               <label>
-                Tell Us a Little More <span>*</span>
+                Tell Us a Little More <span aria-hidden="true">*</span>
                 <textarea
                   name="message"
                   required
@@ -774,7 +835,7 @@ function ContactPage() {
                 {formStatus === 'submitting' ? 'Sending…' : 'Send Request'}
                 {formStatus !== 'submitting' && <Icon name="arrow" size={19} />}
               </button>
-              <p className="form-note">
+              <p className="form-note" id="form-privacy-note">
                 Your request will be sent securely to VETS4VETS26. For immediate contact, call{' '}
                 <a href="tel:+14235261254">423-526-1254</a>.
               </p>
@@ -786,11 +847,44 @@ function ContactPage() {
               )}
               {formStatus === 'error' && (
                 <p className="form-message form-error" role="alert">
-                  We could not send your request. Please try again or call 423-526-1254.
+                  We could not send your request. Please try again or call{' '}
+                  <a href="tel:+14235261254">423-526-1254</a>.
                 </p>
               )}
             </form>
           </div>
+        </div>
+      </section>
+
+      <section className="office-map" aria-labelledby="office-map-title">
+        <div className="office-map__details">
+          <span className="eyebrow eyebrow--light"><i /> Find Us</span>
+          <div className="office-map__pin" aria-hidden="true">
+            <Icon name="pin" size={27} />
+          </div>
+          <h2 id="office-map-title">Right here in Bristol.</h2>
+          <address>
+            <strong>620 State Street, STE 3008</strong>
+            <span>Bristol, Tennessee 37630</span>
+          </address>
+          <a
+            className="button button--primary"
+            href="https://www.google.com/maps/dir/?api=1&destination=620+State+Street+STE+3008+Bristol+TN+37630"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Get Directions <Icon name="arrow" size={19} />
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        </div>
+        <div className="office-map__frame">
+          <iframe
+            src="https://www.google.com/maps?q=620+State+Street,+Suite+3008,+Bristol,+TN+37630&output=embed"
+            title="Map showing the VETS4VETS26 office in Bristol, Tennessee"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
         </div>
       </section>
 
@@ -823,7 +917,7 @@ function PageHero({ index, eyebrow, title, text }) {
 
 function ValuesStrip() {
   return (
-    <div className="values-strip" aria-label="Our values">
+    <section className="values-strip" aria-label="Our values">
       <div className="site-container">
         {values.map((value) => (
           <span key={value.title}>
@@ -832,7 +926,7 @@ function ValuesStrip() {
           </span>
         ))}
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -869,12 +963,12 @@ function Footer({ navigate }) {
             Helping those who need us.
           </p>
         </div>
-        <div className="footer-nav">
+        <nav className="footer-nav" aria-label="Footer navigation">
           <span>Explore</span>
           {Object.entries(pages).map(([href, page]) => (
             <Link key={href} to={href} navigate={navigate}>{page.label}</Link>
           ))}
-        </div>
+        </nav>
         <div className="footer-contact">
           <span>Contact</span>
           <a href="tel:+14235261254">423-526-1254</a>
@@ -887,6 +981,7 @@ function Footer({ navigate }) {
           >
             <Icon name="facebook" size={16} />
             Facebook: VETS4VETS26
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
           <p>620 State Street, STE 3008<br />Bristol, TN 37630</p>
         </div>
@@ -900,22 +995,14 @@ function Footer({ navigate }) {
   )
 }
 
-function App() {
-  const normalizePath = () => {
-    let current = window.location.pathname
-
-    if (basePath && current.startsWith(`${basePath}/`)) {
-      current = current.slice(basePath.length)
-    }
-
-    current = current.replace(/\/+$/, '') || '/'
-    return pages[current] ? current : '/'
-  }
-  const [path, setPath] = useState(normalizePath)
+function App({ initialPath = '/' }) {
+  const [path, setPath] = useState(() => normalizePath(initialPath))
+  const previousPath = useRef(path)
 
   const navigate = (to) => {
     if (to === path) {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
       return
     }
     window.history.pushState({}, '', browserPath(to))
@@ -929,8 +1016,16 @@ function App() {
   }, [])
 
   useEffect(() => {
+    const routeChanged = previousPath.current !== path
+
     document.title = `${pages[path].title} | VETS4VETS26`
     window.scrollTo({ top: 0, behavior: 'auto' })
+
+    if (routeChanged) {
+      document.getElementById('main-content')?.focus({ preventScroll: true })
+    }
+
+    previousPath.current = path
   }, [path])
 
   let page
@@ -941,6 +1036,7 @@ function App() {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <Header path={path} navigate={navigate} />
       <div className="page" key={path}>{page}</div>
       <Footer navigate={navigate} />
