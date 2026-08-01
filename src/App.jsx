@@ -238,9 +238,9 @@ function Header({ path, navigate }) {
       <div className="support-bar">
         <div className="site-container support-bar__inner">
           <span>Veteran in need? You do not have to face it alone.</span>
-          <a href="tel:+12765488790">
+          <a href="tel:+14235261254">
             <Icon name="phone" size={15} />
-            276-548-8790
+            423-526-1254
           </a>
         </div>
       </div>
@@ -332,7 +332,7 @@ function HomePage({ navigate }) {
             </div>
             <div className="hero-contact">
               <span>Need to speak with someone?</span>
-              <a href="tel:+12765488790">Call 276-548-8790</a>
+              <a href="tel:+14235261254">Call 423-526-1254</a>
             </div>
           </div>
           <div className="home-hero__emblem">
@@ -632,23 +632,28 @@ function ServicesPage({ navigate }) {
 }
 
 function ContactPage() {
-  const [sent, setSent] = useState(false)
+  const [formStatus, setFormStatus] = useState('idle')
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    const name = form.get('name')
-    const email = form.get('email')
-    const phone = form.get('phone')
-    const need = form.get('need')
-    const message = form.get('message')
-    const subject = encodeURIComponent(`Veteran assistance request — ${need}`)
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nArea of need: ${need}\n\nMessage:\n${message}`,
-    )
+    const form = event.currentTarget
 
-    setSent(true)
-    window.location.href = `mailto:vets4vets2026@outlook.com?subject=${subject}&body=${body}`
+    setFormStatus('submitting')
+
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      })
+
+      if (!response.ok) throw new Error('Form submission failed')
+
+      form.reset()
+      setFormStatus('success')
+    } catch {
+      setFormStatus('error')
+    }
   }
 
   return (
@@ -671,11 +676,11 @@ function ContactPage() {
             </p>
 
             <div className="contact-cards">
-              <a className="contact-card" href="tel:+12765488790">
+              <a className="contact-card" href="tel:+14235261254">
                 <span><Icon name="phone" size={25} /></span>
                 <div>
                   <small>Phone</small>
-                  <strong>276-548-8790</strong>
+                  <strong>423-526-1254</strong>
                   <em>Tap to call</em>
                 </div>
               </a>
@@ -721,7 +726,12 @@ function ContactPage() {
               <span>Request Assistance</span>
               <b>A simple first step</b>
             </div>
-            <form onSubmit={handleSubmit}>
+            <form
+              action="https://formspree.io/f/mgogjpbe"
+              method="POST"
+              onSubmit={handleSubmit}
+            >
+              <input type="hidden" name="_subject" value="Veteran assistance request" />
               <div className="field-row">
                 <label>
                   Your Name <span>*</span>
@@ -756,18 +766,27 @@ function ContactPage() {
                   placeholder="Share only what you are comfortable sharing."
                 />
               </label>
-              <button className="button button--primary form-submit" type="submit">
-                Prepare Email <Icon name="arrow" size={19} />
+              <button
+                className="button button--primary form-submit"
+                type="submit"
+                disabled={formStatus === 'submitting'}
+              >
+                {formStatus === 'submitting' ? 'Sending…' : 'Send Request'}
+                {formStatus !== 'submitting' && <Icon name="arrow" size={19} />}
               </button>
               <p className="form-note">
-                This form opens your email app so you can review the message
-                before sending. For immediate contact, call{' '}
-                <a href="tel:+12765488790">276-548-8790</a>.
+                Your request will be sent securely to VETS4VETS26. For immediate contact, call{' '}
+                <a href="tel:+14235261254">423-526-1254</a>.
               </p>
-              {sent && (
-                <p className="form-success" role="status">
+              {formStatus === 'success' && (
+                <p className="form-message form-success" role="status">
                   <Icon name="check" size={19} />
-                  Your email app should now be open.
+                  Your request was sent. We will be in touch soon.
+                </p>
+              )}
+              {formStatus === 'error' && (
+                <p className="form-message form-error" role="alert">
+                  We could not send your request. Please try again or call 423-526-1254.
                 </p>
               )}
             </form>
@@ -858,7 +877,7 @@ function Footer({ navigate }) {
         </div>
         <div className="footer-contact">
           <span>Contact</span>
-          <a href="tel:+12765488790">276-548-8790</a>
+          <a href="tel:+14235261254">423-526-1254</a>
           <a href="mailto:vets4vets2026@outlook.com">vets4vets2026@outlook.com</a>
           <a
             className="footer-facebook"

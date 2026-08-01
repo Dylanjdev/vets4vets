@@ -1379,6 +1379,11 @@ a.contact-card:hover strong {
   margin-top: 2px;
 }
 
+.form-submit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
 .form-note {
   margin: -4px 0 0;
   color: #898985;
@@ -1392,17 +1397,26 @@ a.contact-card:hover strong {
   font-weight: 700;
 }
 
-.form-success {
+.form-message {
   display: flex;
   gap: 9px;
   align-items: center;
   justify-content: center;
   margin: -3px 0 0;
   padding: 11px;
+  font-size: 11px;
+}
+
+.form-success {
   color: #22442d;
   background: #e8f3ea;
   border: 1px solid #bdd5c3;
-  font-size: 11px;
+}
+
+.form-error {
+  color: #6d2020;
+  background: #f9e8e8;
+  border: 1px solid #dfb8b8;
 }
 
 .contact-closer {
