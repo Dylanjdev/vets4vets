@@ -7,6 +7,7 @@
       // GitHub Pages has no native SPA fallback. Preserve the requested route
       // in the query string, return to the site root, and let index.html
       // restore the clean URL before React starts.
+      // redirect to the same route on the root of the repository, preserving query string and hash
       ;(function (location) {
         var pathSegmentsToKeep = 0
         var repositoryRoot = location.pathname
